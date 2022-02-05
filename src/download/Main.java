@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Scanner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -18,7 +19,10 @@ import com.alibaba.fastjson.JSONObject;
 
 public class Main {
 	public static void main(String[] args){
-		String result=httpURLGETJson();
+		Scanner scanner = new Scanner(System.in);
+		String url = scanner.nextLine();
+		String jsonUrl = GetPostJsonUrl(url);
+		String result=httpURLGETJson(jsonUrl);
 		JSONArray img = jsonGetImgArray(result);
 		for(int i=0;i<img.size();i++) {
 			try {
@@ -29,7 +33,12 @@ public class Main {
 			}
 			System.out.println(img.get(i));
 		}
+		scanner.close();
 
+	}
+	private static String GetPostJsonUrl(String url) {
+		String postId = url.substring(url.lastIndexOf("/") + 1);
+		return "https://bbs-api.mihoyo.com/post/wapi/getPostFull?gids=2&post_id="+postId+"&read=1";
 	}
 	private static void imgDownload(String imgUrl) throws IOException {
 		URL url1 = new URL(imgUrl);
@@ -53,8 +62,7 @@ public class Main {
 		return img;
 	}
 	
-	private static String httpURLGETJson() {
-        String methodUrl = "";
+	private static String httpURLGETJson(String methodUrl) {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         String line = null;
